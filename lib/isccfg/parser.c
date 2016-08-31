@@ -1772,24 +1772,6 @@ cfg_print_mapbody(cfg_printer_t *pctx, const cfg_obj_t *obj) {
 	}
 }
 
-void
-cfg_doc_mapbody(cfg_printer_t *pctx, const cfg_type_t *type) {
-	const cfg_clausedef_t * const *clauseset;
-	const cfg_clausedef_t *clause;
-
-	for (clauseset = type->of; *clauseset != NULL; clauseset++) {
-		for (clause = *clauseset;
-		     clause->name != NULL;
-		     clause++) {
-			cfg_print_cstr(pctx, clause->name);
-			cfg_print_cstr(pctx, " ");
-			cfg_doc_obj(pctx, clause->type);
-			/* XXX print flags here? */
-			cfg_print_cstr(pctx, ";\n\n");
-		}
-	}
-}
-
 static struct flagtext {
 	unsigned int flag;
 	const char *text;
@@ -1802,17 +1784,6 @@ static struct flagtext {
 	{ CFG_CLAUSEFLAG_NOTCONFIGURED, "not configured" },
 	{ 0, NULL }
 };
-
-void
-cfg_print_map(cfg_printer_t *pctx, const cfg_obj_t *obj) {
-	if (obj->value.map.id != NULL) {
-		cfg_print_obj(pctx, obj->value.map.id);
-		cfg_print_cstr(pctx, " ");
-	}
-	print_open(pctx);
-	cfg_print_mapbody(pctx, obj);
-	print_close(pctx);
-}
 
 static void
 print_clause_flags(cfg_printer_t *pctx, unsigned int flags) {
@@ -1828,6 +1799,36 @@ print_clause_flags(cfg_printer_t *pctx, unsigned int flags) {
 			first = ISC_FALSE;
 		}
 	}
+}
+
+void
+cfg_doc_mapbody(cfg_printer_t *pctx, const cfg_type_t *type) {
+	const cfg_clausedef_t * const *clauseset;
+	const cfg_clausedef_t *clause;
+
+	for (clauseset = type->of; *clauseset != NULL; clauseset++) {
+		for (clause = *clauseset;
+		     clause->name != NULL;
+		     clause++) {
+			cfg_print_cstr(pctx, clause->name);
+			cfg_print_cstr(pctx, " ");
+			cfg_doc_obj(pctx, clause->type);
+			cfg_print_cstr(pctx, ";");
+			print_clause_flags(pctx, clause->flags);
+			cfg_print_cstr(pctx, "\n\n");
+		}
+	}
+}
+
+void
+cfg_print_map(cfg_printer_t *pctx, const cfg_obj_t *obj) {
+	if (obj->value.map.id != NULL) {
+		cfg_print_obj(pctx, obj->value.map.id);
+		cfg_print_cstr(pctx, " ");
+	}
+	print_open(pctx);
+	cfg_print_mapbody(pctx, obj);
+	print_close(pctx);
 }
 
 void
