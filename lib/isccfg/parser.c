@@ -1782,6 +1782,7 @@ static struct flagtext {
 	{ CFG_CLAUSEFLAG_NEWDEFAULT, "default changed" },
 	{ CFG_CLAUSEFLAG_TESTONLY, "test only" },
 	{ CFG_CLAUSEFLAG_NOTCONFIGURED, "not configured" },
+	{ CFG_CLAUSEFLAG_MULTI, "may occur multiple times" },
 	{ 0, NULL }
 };
 
